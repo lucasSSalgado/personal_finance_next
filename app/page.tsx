@@ -16,8 +16,8 @@ export default async function Home() {
   return (
     <>
       <Header />
-      <main className="m-auto w-9/12 mt-2">
-        <h1 className="text-center text-2xl">Your Assets</h1>
+      <main className="m-auto w-8/12 mt-5">
+        <h1 className="text-center text-3xl">Your Assets</h1>
         <p>GRAFICOS ALEATÓRIOS AQUI</p>
       </main>
     </>
