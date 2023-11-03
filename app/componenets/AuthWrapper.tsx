@@ -8,7 +8,7 @@ export default async function AuthWrapper({ children }: { children:React.ReactNo
     const session = data.session
 
     if (!session) {
-    redirect('/login')
+        redirect('/login')
     }
   
     return(
