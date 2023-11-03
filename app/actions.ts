@@ -27,9 +27,19 @@ export async function saveStock(prevState: any, formData: FormData) {
     let arraySize = sanitizeStockName.split('.')
 
     if (arraySize.length == 2) {
-        await supabase.from('stocks').insert({ symbol: arraySize[0], country: 'London', quantity: quantity })
+        const { status } = await supabase.from('stocks').select().eq('symbol', arraySize[0])
+        if (status === 200) {
+            await supabase.from('stocks').update({ quantity: quantity }).eq('symbol', arraySize[0])
+        } else {
+            await supabase.from('stocks').insert({ symbol: arraySize[0], country: 'London', quantity: quantity })
+        }
     } else {
-        await supabase.from('stocks').insert({ symbol: stockName, country: 'USA', quantity: quantity })
+        const { status } = await supabase.from('stocks').select().eq('symbol', stockName)
+        if (status === 200) {
+            await supabase.from('stocks').update({ quantity: quantity }).eq('symbol', stockName)
+        } else {
+            await supabase.from('stocks').insert({ symbol: stockName, country: 'London', quantity: quantity })
+        }
     }
 }
 
@@ -45,7 +55,13 @@ export async function saveCripto(prevState: any, formData: FormData) {
     const supabase = createServerComponentClient({ cookies })
 
     const coinName = formData.get('coin')
+    const code = formData.get('code')
     const quantity = formData.get('quantity')
 
-    console.log(coinName, quantity)
+    const { data, status } = await supabase.from('cripto').select().eq('code', code)
+    if (status === 200 && data?.length !== 0) {
+        await supabase.from('cripto').update({ quantity: quantity }).eq('code', code)
+    } else {
+        await supabase.from('cripto').insert({ name: coinName, code: code, quantity: quantity })
+    }
 }
