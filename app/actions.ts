@@ -10,6 +10,8 @@ export async function getStockData(prevState: any, formData: FormData) {
 
     if (country === 'usa') {
         stockResp = await fetch(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${process.env.NEXT_PUBLIC_ALPHA_VANTAGE}`)
+    } else if (country === 'brazil') {
+        stockResp = await fetch(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}.SAO&apikey=${process.env.NEXT_PUBLIC_ALPHA_VANTAGE}`)
     } else {
         stockResp = await fetch(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}.LON&apikey=${process.env.NEXT_PUBLIC_ALPHA_VANTAGE}`)
     }
@@ -20,25 +22,20 @@ export async function getStockData(prevState: any, formData: FormData) {
 
 export async function saveStock(prevState: any, formData: FormData) {
     const stockName = formData.get('stock')
-    const quantity = formData.get('number')
+    const quantity = Number(formData.get('number'))
     const supabase = createServerComponentClient({ cookies })
 
-    let sanitizeStockName = String(stockName)
+    let sanitizeStockName = String(stockName)   
     let arraySize = sanitizeStockName.split('.')
 
     if (arraySize.length == 2) {
-        const { status } = await supabase.from('stocks').select().eq('symbol', arraySize[0])
-        if (status === 200) {
-            await supabase.from('stocks').update({ quantity: quantity }).eq('symbol', arraySize[0])
-        } else {
-            await supabase.from('stocks').insert({ symbol: arraySize[0], country: 'London', quantity: quantity })
-        }
+        saveBasedOnSymbol(arraySize[0], arraySize[1], quantity)
     } else {
         const { status } = await supabase.from('stocks').select().eq('symbol', stockName)
         if (status === 200) {
             await supabase.from('stocks').update({ quantity: quantity }).eq('symbol', stockName)
         } else {
-            await supabase.from('stocks').insert({ symbol: stockName, country: 'London', quantity: quantity })
+            await supabase.from('stocks').insert({ symbol: stockName, country: 'USA', quantity: quantity })
         }
     }
 }
@@ -63,5 +60,35 @@ export async function saveCripto(prevState: any, formData: FormData) {
         await supabase.from('cripto').update({ quantity: quantity }).eq('code', code)
     } else {
         await supabase.from('cripto').insert({ name: coinName, code: code, quantity: quantity })
+    }
+}
+
+export async function saveManual(prevState: any, formData: FormData) {
+    const title = formData.get('title')
+    const type = formData.get('type')
+    let quantity = Number(formData.get('quantity'))
+    const value = Number(formData.get('value'))
+
+    if (quantity === null || quantity === undefined) quantity = 0
+
+    const supabase = createServerComponentClient({ cookies }) 
+    const resp = await supabase.from('other').insert({ title: title, type: type, quantity: quantity, value: value})
+    if (resp.status === 201) return true
+    else return false
+} 
+
+// utils
+async function saveBasedOnSymbol(symbol: String, country: String, quantity: Number) {
+    const supabase = createServerComponentClient({ cookies })
+    const { status } = await supabase.from('stocks').select().eq('symbol', symbol)
+    let countryName: String = ''
+
+    if (country === 'LON') countryName = 'London'
+    if (country === 'SAO') countryName = 'Brazil'
+
+    if (status == 200) {
+        await supabase.from('stocks').update({ quantity: quantity }).eq('symbol', symbol)
+    } else {
+        await supabase.from('stocks').insert({ symbol: symbol, country: countryName, quantity: quantity })
     }
 }

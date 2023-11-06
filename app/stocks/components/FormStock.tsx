@@ -16,6 +16,8 @@ export default function FormStock() {
                 <label htmlFor="usa">USA</label><br/>
                 <input type="radio" id="london" name="country" value="london" required/>
                 <label htmlFor="london">London</label><br />
+                <input type="radio" id="brazil" name="country" value="brazil" required />
+                <label htmlFor="brazil">Brazil</label> <br />
                 <button className="border border-slate-50 rounded px-1 mt-2
                 hover:bg-slate-200 hover:text-black" type="submit">
                     Search

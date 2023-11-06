@@ -4,8 +4,8 @@ import './globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
 export const metadata: Metadata = {
-  title: 'Personal fiannce',
-  description: 'App to organize my own finance',
+  title: 'Personal finance',
+  description: 'App to organize my own personal finances',
 }
 
 export default function RootLayout({ children }:{ children: React.ReactNode }) {
