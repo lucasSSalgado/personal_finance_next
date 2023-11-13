@@ -13,7 +13,7 @@ export default function PieChart({ data }:{ data: any }) {
         datasets: [
             {
                 label: 'value',
-                data: data.map((elem: any) => elem.quantity),
+                data: data.map((elem: any) => elem.stockprice),
                 backgroundColor: arrayOfColor
             }
         ]
