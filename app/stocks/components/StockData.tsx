@@ -4,13 +4,12 @@ import { saveStock } from '@/app/actions'
 
 export default function StockData({ stock }: { stock: any }) {
     const [state, formAction] = useFormState(saveStock, null)
-
+    console.log(stock)
 
     return (
         <div className="mt-5 border border-slate-50 rounded-md p-2">
-            <p>Symbol: { stock['01. symbol'] }</p>
-            <p>Current Price: US$ { stock['05. price'] }</p>
-            <p>Variation: { stock['10. change percent'] }</p>
+            <p>Symbol: { stock['symbol'] }</p>
+            <p>Current Price: US$ { stock['price'] }</p>
 
             <form action={formAction}>
                 <label htmlFor="number">Quantity: </label>

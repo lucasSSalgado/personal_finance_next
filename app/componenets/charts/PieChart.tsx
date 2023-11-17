@@ -20,6 +20,8 @@ export default function PieChart({ data }:{ data: any }) {
     }
 
     return (
-        <Pie data={stockData} />
+        <div className='w-5/12'>
+            <Pie data={stockData} />
+        </div>
     )
 }

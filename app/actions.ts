@@ -8,16 +8,34 @@ export async function getStockData(prevState: any, formData: FormData) {
     const country = formData.get('country')
     let stockResp: Response
 
-    if (country === 'usa') {
-        stockResp = await fetch(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${process.env.NEXT_PUBLIC_ALPHA_VANTAGE}`)
+    if (country === 'usa' || country === 'london') {
+        stockResp = await fetch(`https://realstonks.p.rapidapi.com/${symbol}`, {
+            headers: {
+                'X-RapidAPI-Key': process.env.NEXT_PUBLIC_REALSTOCKS_KEY as string,
+                'X-RapidAPI-Host': 'realstonks.p.rapidapi.com'
+            }
+        }) 
     } else if (country === 'brazil') {
-        stockResp = await fetch(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}.SAO&apikey=${process.env.NEXT_PUBLIC_ALPHA_VANTAGE}`)
-    } else {
-        stockResp = await fetch(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}.LON&apikey=${process.env.NEXT_PUBLIC_ALPHA_VANTAGE}`)
-    }
+        stockResp = await fetch(`https://brapi.dev/api/quote/${symbol}?token=${process.env.NEXT_PUBLIC_BRAPI_KEY}`)
+    } 
 
-    const stockData = await stockResp.json()
-    return stockData['Global Quote']
+    const stockData = await stockResp!.json()
+
+    let sanitizeObj
+
+    if (country === 'brazil') {        
+        sanitizeObj = {
+            symbol: symbol,
+            price: stockData.results[0].regularMarketPrice
+        }
+    } else {
+        sanitizeObj = {
+            symbol: symbol,
+            price: stockData.price
+        }
+    }
+    
+    return sanitizeObj
 }
 
 export async function saveStock(prevState: any, formData: FormData) {

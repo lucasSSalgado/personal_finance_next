@@ -15,25 +15,20 @@ export default async function Home() {
       const actualStock = data[i]
       const symbol = actualStock.symbol
       const stockprice = await getUpdatePrice(symbol, actualStock.country, actualStock.quantity)
-      stockDataList.push( {symbol, stockprice} )
+      stockDataList.push({ symbol, stockprice })
     }
   }
-  
-  //console.log(stockDataList)
-  // new api https://rapidapi.com/amansharma2910/api/realstonks/
-  // have more request possibles, us and london stocks available but not brazilian
 
   return (
     <AuthWrapper>
       <Header />
       <main className="m-auto w-8/12 mt-5">
         <h1 className="text-center text-3xl">Your Assets</h1>
-        <p>GRAFICOS ALEATÓRIOS AQUI</p>
+        {/* inside the braces create a deshboard component */}
         { 
-          stockDataList.length !== 0 && 
+          stockDataList.length !== 0 &&
           <PieChart data={ stockDataList } /> 
         }
-
       </main>
     </AuthWrapper>
   )

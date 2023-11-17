@@ -23,7 +23,6 @@ export default function FormStock() {
                     Search
                 </button>
             </form>
-
             {   
                 state &&
                 <StockData stock={state} />
